@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\peichuan\\envs\\rough-like-project\\Scripts\\python.exe"
+    "python.pythonPath": "C:\\Users\\peichuan\\envs\\rough-like-project\\Scripts\\python.exe",
+    "python.formatting.provider": "black"
 }
