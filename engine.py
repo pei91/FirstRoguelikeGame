@@ -2,11 +2,21 @@ import tcod as libtcod
 
 from entity import Entity
 from input_handlers import handle_keys
+from map_objects.game_map import GameMap
 from render_functions import render_all, clear_all
 
 def main():
     screen_width = 80
     screen_height = 50
+    map_width = 80
+    map_height = 45
+
+    colors = {
+        'dark_wall': libtcod.Color(0, 0, 100),
+        'dark_ground': libtcod.Color(50, 50, 150)
+    }
+
+    game_map = GameMap(map_width,map_height)
 
 
     player = Entity(int(screen_width/2), int(screen_height/2), '@', libtcod.white)
@@ -28,7 +38,7 @@ def main():
         # libtcod.console_put_char(con, player.x, player.y, '@', libtcod.BKGND_NONE)
         # libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
-        render_all(con, entities, screen_width, screen_height)
+        render_all(con, entities, game_map, screen_width, screen_height, colors)
         libtcod.console_flush()
 
         # libtcod.console_put_char(con, player.x, player.y, ' ', libtcod.BKGND_NONE)
@@ -42,7 +52,8 @@ def main():
 
         if move:
             dx, dy = move
-            player.move(dx, dy)
+            if not game_map.is_blocked(player.x + dx, player.y + dy):
+                player.move(dx, dy)
 
         if exit:
             return True
