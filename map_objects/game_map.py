@@ -10,9 +10,6 @@ class GameMap:
 
     def initialize_tiles(self):
         tiles = [[Tile(True) for y in range(self.height)] for x in range(self.width)]
-
-        
-
         return tiles
     
     def make_map(self, max_rooms, room_min_size, room_max_size, map_width, map_height, player):
@@ -20,7 +17,7 @@ class GameMap:
         rooms = []
         num_rooms = 0
 
-        for r in range(max_rooms):
+        for _ in range(max_rooms):
             # random w and h
             w = randint(room_min_size, room_max_size)
             h = randint(room_min_size, room_max_size)
@@ -68,11 +65,6 @@ class GameMap:
                 # finally append the new room to the list
                 rooms.append(new_room)
                 num_rooms +=1
-
-
-
-
-
 
     def create_room(self, room):
         #  go through the tiles in the rectangle and meke them passable
