@@ -1,5 +1,6 @@
 import tcod as libtcod
 
+from components.fighter import Fighter
 from entity import Entity, get_blocking_entities_at_location
 from fov_functions import initialize_fov, recompute_fov
 from game_states import GameStates
@@ -30,17 +31,18 @@ def main():
         'light_ground': libtcod.Color(200, 100, 50),
     }
 
-    player = Entity(0, 0, '@', libtcod.white, 'Player', blocks = True)
+    fighter_component = Fighter(hp=30, defense=2, power=5)
+    player = Entity(0, 0, '@', libtcod.white, 'Player', blocks = True, fighter = fighter_component)
     entities = [player]
 
-    game_map = GameMap(map_width,map_height)
 
-    
-    libtcod.console_set_custom_font('./images/arial10X10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    # Main\images\arial10x10.png
+    libtcod.console_set_custom_font("./Main/images/arial10x10.png", libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
     libtcod.console_init_root(screen_width,screen_height, 'libtcod tutorial revised', False)
 
     con = libtcod.console_new(screen_width, screen_height)
 
+    game_map = GameMap(map_width,map_height)
     game_map.make_map(max_rooms, room_min_size, room_max_size, map_width, map_height,
                      player, entities, max_monsters_per_room)
     
@@ -58,9 +60,6 @@ def main():
 
         if fov_recompute:
             recompute_fov(fov_map, player.x, player.y, fov_radius, fov_light_walls, fov_algorithm)
-        # libtcod.console_set_default_foreground(con,libtcod.white)
-        # libtcod.console_put_char(con, player.x, player.y, '@', libtcod.BKGND_NONE)
-        # libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
         render_all(con, entities, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
         fov_recompute = False
@@ -97,8 +96,10 @@ def main():
         # Enemy move
         if game_state == GameStates.ENEMY_TURN:
             for entity in entities:
-                if entity != player:
-                    print('The ' + entity.name + 'does nothing.')
+                if entity.ai:
+                    # print('The ' + entity.name + 'does nothing.')
+                    entity.ai.take_turn(player, fov_map, game_map, entities)
+
             game_state = GameStates.PLAYERS_TURN
 
         if exit:
